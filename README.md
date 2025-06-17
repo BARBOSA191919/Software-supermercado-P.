@@ -44,7 +44,7 @@
 
 ## 📁 Estructura del Proyecto
 
-```text
+```
 mini-control-empleados/
 ├── 📂 controlador/     # Controladores REST y Web
 ├── 📂 entidades/       # Modelos JPA/Hibernate
@@ -141,6 +141,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 ## 🌟 ¿Te gusta el proyecto?
 
 Si este proyecto te ha sido útil, ¡dale una ⭐ en GitHub!
+*[⭐ Star en GitHub](https://github.com/BARBOSA191919/Software-supermercado-P.)*
 
 ---
 
