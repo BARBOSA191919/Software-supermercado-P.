@@ -46,8 +46,10 @@
 
 
 mini-control-empleados/
-├── 📂 controlador/          # Controladores REST y Web
-├── 📂 entidades/           # Modelos JPA/Hibernate
+  # Controladores REST y Web
+├── 📂 controlador/  
+# Modelos JPA/Hibernate
+├── 📂 entidades/           
 ├── 📂 repositorios/        # Repositorios de datos
 ├── 📂 servicio/           # Lógica de negocio
 ├── 📂 ServiceImpl/        # Implementaciones de servicios
