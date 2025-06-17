@@ -149,16 +149,6 @@ mini-control-empleados/
 ### Gestión de Inventario
 ![Inventario](https://via.placeholder.com/800x400/FF9800/white?text=Control+Inventario)
 
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (git checkout -b feature/AmazingFeature)
-3. Commit tus cambios (git commit -m 'Add some AmazingFeature')
-4. Push a la rama (git push origin feature/AmazingFeature)
-5. Abre un Pull Request
-
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
@@ -166,6 +156,9 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 ## 👨‍💻 Autor
 
 *Julián Pinto* - [GitHub](https://github.com/julianpinto15)
+*Santiago Barbosa* - [GitHub](https://github.com/BARBOSA191919)
+*Diego Martinez* - [GitHub](https://github.com/Difa98)
+*Nicolas Sanabria* - [GitHub](https://github.com/NicolasSE05)
 
 ## 🌟 ¿Te gusta el proyecto?
 
