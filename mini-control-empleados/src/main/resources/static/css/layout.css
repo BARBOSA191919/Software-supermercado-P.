@@ -1,0 +1,29 @@
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar{
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    margin-bottom: 14px;
+}
+
+
+.text-title{
+    font-size:30px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.fas{
+    color: #fff;
+}
+
+.btn-margin{
+    margin-right: 20px;
+}
+
+

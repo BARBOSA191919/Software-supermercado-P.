@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/3082/3082011.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/formFruvert.css}">
+    <title >Formulario de Fruvert</title>
+</head>
+
+<body>
+<!-- Botón del sidebar -->
+<button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="sidebar-title">Fruver y Carnes</span>
+        <div class="top-center-button">
+            <a th:href="@{/principal}">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+    </div>
+    <div class="mt-3">
+        <a href="javascript:history.back()" class="btn btn-secondary btn-block">
+            <i class="fas fa-arrow-left mr-2"></i> Volver Atrás
+        </a>
+    </div>
+
+    <a href="javascript:void(0);" class="nav-link" onclick="abrirVentana('/listarFruvert')">
+        <i class="fas fa-apple-alt"></i> Frutas
+    </a>
+    <a href="javascript:void(0);" class="nav-link" onclick="abrirVentana('/listarCarnes')">
+        <i class="fas fa-drumstick-bite"></i> Carnes
+    </a>
+    <a href="javascript:void(0);" class="nav-link" onclick="abrirVentana('/listarVerduras')">
+        <i class="fas fa-carrot"></i> Verduras
+    </a>
+
+    <div class="sidebar-footer">
+        <form th:action="@{/logout}" method="post">
+            <button class="btn btn-danger btn-block">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Contenido principal -->
+<div class="main-content" id="main-content">
+    <div class="container">
+        <div class="card">
+            <div class="card-header" th:text="${titulo}">GESTIÓN DE FRUVERT</div>
+            <div class="card-body">
+                <form th:action="@{/formFruvert}" th:object="${fruvert}" method="post" id="productoForm" onsubmit="return validarFormulario()">
+                    <input type="hidden" th:field="*{id}" />
+                    <div class="container">
+                        <form>
+                            <!-- Primer grupo de campos -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="categoria" class="mb-2">Categoría</label>
+                                        <select th:field="*{categoria}" id="categoria" class="form-control">
+                                            <option value="" disabled>Selecciona una categoría</option>
+                                            <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}"></option>
+                                        </select>
+                                        <div class="error-message" id="categoriaError" style="color: red; display: none;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="nombre" class="mb-2">Nombre del producto</label>
+                                        <input autocomplete="off" autofocus th:field="*{nombre}" id="nombre"
+                                               placeholder="Escribe el nombre del producto" type="text"
+                                               class="form-control" th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:errors="*{nombre}"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="codigo" class="mb-2">Código de barras</label>
+                                        <input autocomplete="off" th:field="*{codigo}" id="codigo"
+                                               placeholder="Escribe el código del producto" type="text"
+                                               class="form-control" th:classappend="${#fields.hasErrors('codigo')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:errors="*{codigo}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Segundo grupo de campos -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="mb-2">¿El IVA está incluido en el precio de venta?</label>
+                                        <div class="d-flex align-items-center">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="ivaIncluido" id="ivaIncluido" value="true">
+                                                <label class="form-check-label" for="ivaIncluido">Sí</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="ivaIncluido" id="ivaNoIncluido" value="false">
+                                                <label class="form-check-label" for="ivaNoIncluido">No</label>
+                                            </div>
+                                        </div>
+                                        <div id="ivaError" class="error-message" style="color: red; margin-top: 5px;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="precio" class="mb-2">Precio</label>
+                                        <input autocomplete="off" th:field="*{precio}" id="precio"
+                                               placeholder="Precio del producto" type="number"
+                                               class="form-control" th:classappend="${#fields.hasErrors('precio')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:errors="*{precio}"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="existencia" class="mb-2">Cantidad</label>
+                                        <input autocomplete="off" th:field="*{existencia}" id="existencia" readonly
+                                               placeholder="Cantidad actual del producto" type="number"
+                                               class="form-control" th:classappend="${#fields.hasErrors('existencia')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:errors="*{existencia}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tercer grupo de campos -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="iva" class="mb-2">IVA</label>
+                                        <select th:field="*{iva}" id="iva" class="form-control">
+                                            <option value="5">5%</option>
+                                            <option value="19">19%</option>
+                                            <option value="0">0%</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="descuento" class="mb-2">Descuento (%)</label>
+                                        <input autocomplete="off" th:field="*{descuento}" id="descuento"
+                                               placeholder="Descuento del producto en %" type="number" class="form-control"
+                                               oninput="calcularPrecioFinal()">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="precio_final" class="mb-2">Precio Final</label>
+                                        <input autocomplete="off" th:field="*{precio_final}" id="precio_final" readonly
+                                               placeholder="Precio final tras descuento" type="number"
+                                               class="form-control" th:classappend="${#fields.hasErrors('precio_final')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:errors="*{precio_final}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-5">
+                                <button class="btn btn-success" type="submit">
+                                    <i class="fas fa-save"></i> Guardar
+                                </button>
+                                <a class="btn btn-warning ml-2" th:href="@{/listarFruvert}">
+                                    <i class="fas fa-list"></i> Listado fruvert
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script th:src="@{/js/formFruvert.js}"></script>
+</body>
+
+</html>

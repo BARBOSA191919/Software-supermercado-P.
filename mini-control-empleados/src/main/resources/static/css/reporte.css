@@ -1,0 +1,116 @@
+.menu-section-title {
+    color: rgba(255,255,255,0.6);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    margin-left: 16px;
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    background: #343a40;
+    color: #fff;
+    transition: all 0.3s;
+    margin-left: -250px; /* Ocultar el sidebar por defecto */
+    position: fixed; /* Mantener fijo en pantalla */
+    z-index: 1000; /* Asegurar que esté sobre otros elementos */
+}
+
+@media (min-width: 768px) {
+    #sidebar {
+        position: relative; /* En pantallas grandes, volver a posicionamiento normal */
+    }
+}
+
+#sidebar.active {
+    margin-left: 0; /* Mostrar el sidebar cuando está activo */
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #343a40;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: #fff;
+    text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+    color: #343a40;
+    background: #fff;
+}
+
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+.logo-text {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.menu-item {
+    margin-bottom: 5px;
+}
+
+.menu-item i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.table-actions .btn {
+    margin-right: 5px;
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pagination-controls {
+    margin-top: 20px;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.page-link {
+    color: #007bff;
+}
+
+.page-link:hover {
+    color: #0056b3;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:layout="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Ventas Supermercado</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Ventas Supermercado</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/vender/}">Vender</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/productos/mostrar}">Productos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/ventas/}">Ventas</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Contenido principal de la página -->
+<main layout:fragment="contenido" role="main" class="container mt-5"></main>
+
+<!-- Pie de página -->
+<footer class="footer bg-dark text-white text-center py-3">
+    <span>Sistema de Ventas Spring Boot - <a href="https://parzibyte.me/blog" class="text-white">Parzibyte</a></span>
+</footer>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        const menu = document.querySelector("#menu"),
+            botonMenu = document.querySelector("#botonMenu");
+        if (menu) {
+            botonMenu.addEventListener("click", () => menu.classList.toggle("show"));
+        }
+    });
+</script>
+</body>
+</html>

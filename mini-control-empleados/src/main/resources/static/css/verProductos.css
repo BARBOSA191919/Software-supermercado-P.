@@ -1,0 +1,129 @@
+/* Contenedor padre con posición relativa */
+.wrapper {
+    position: relative;
+}
+
+.menu-section-title {
+    color: rgba(255,255,255,0.6);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    margin-left: 16px;
+}
+
+/* Botón centrado en la parte superior */
+.top-center-button {
+    position: relative;
+    top: 0; /* Ajusta este valor según lo necesario */
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1000; /* Para asegurar que esté encima */
+}
+
+.top-center-button a {
+    background-color: #343A40;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.top-center-button a:hover {
+    background-color: #495057;
+    color: #fff;
+    transform: translateX(-50%) scale(1.05);
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    background: #343a40;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #343a40;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: #fff;
+    text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+    color: #343a40;
+    background: #fff;
+}
+
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+.logo-text {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.menu-item {
+    margin-bottom: 5px;
+}
+
+.menu-item i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+
+}

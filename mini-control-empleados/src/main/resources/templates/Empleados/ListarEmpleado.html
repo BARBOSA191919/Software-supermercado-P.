@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Empleados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/3082/3082011.png" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/listarEmpleado.css}">
+</head>
+<body>
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">
+                <i class="fas fa-user-shield"></i> Sistema de Gestión
+            </div>
+        </div>
+        <ul class="list-unstyled components">
+            <div class="menu-section-title">MENÚ PRINCIPAL</div>
+            <li class="menu-item">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#agregarEmpleadoModal">
+                    <i class="fas fa-user-plus me-2"></i> Agregar Empleado
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" th:href="@{/usuarios/listar}">
+                    <i class="fas fa-users me-2"></i> Usuarios
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" th:href="@{/turnos/listar}">
+                    <i class="fas fa-clock me-2"></i> Turnos
+                </a>
+            </li>
+        </ul>
+        <div class="menu-section-title mt-3">CONFIGURACIÓN</div>
+        <ul class="list-unstyled">
+            <li>
+                <form id="logoutForm" class="px-4" th:action="@{/logout}" method="post">
+                    <button type="button" class="btn btn-danger btn-block" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-dark">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+            </div>
+        </nav>
+
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-user-tie me-3"></i>
+                <span th:text="${titulo}">Gestión de Empleados</span>
+            </h1>
+
+            <div class="position-content">
+                <div class="mt-3 mb-2 btn-menu">
+                    <a href="javascript:void(0);"class="btn btn-primary btn-block" onclick="abrirVentana(this.href)" th:href="@{/principal}">
+                        <i class="fas fa-home"></i> Menu Principal
+                    </a>
+                </div>
+
+                <div class="search-posicion">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="buscadorEmpleados" placeholder="Buscar por nombre, apellido, cédula o teléfono...">
+                    </div>
+                </div>
+
+                <div class=" text-end">
+                    <button class="btn btn-success" onclick="empleadosPDF()">
+                        <i class="fas fa-file-pdf me-2"></i>Exportar a PDF
+                    </button>
+                </div>
+
+            </div>
+
+
+
+
+            <!-- Tabla de Empleados -->
+            <div class="table-container" id="table-container">
+                <table class="table table-hover" id="empleadosTable">
+                    <thead>
+                    <tr>
+                        <th><i class="fas fa-user me-2"></i>Nombre</th>
+                        <th><i class="fas fa-user me-2"></i>Apellido</th>
+                        <th><i class="fas fa-id-card me-2"></i>Cédula</th>
+                        <th><i class="fas fa-phone me-2"></i>Teléfono</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="empleado : ${empleados}">
+                        <td th:text="${empleado.nombre}"></td>
+                        <td th:text="${empleado.apellido}"></td>
+                        <td th:text="${empleado.cedula}"></td>
+                        <td th:text="${empleado.telefono}"></td>
+                        <td class="text-center action-buttons">
+                            <button class="btn btn-warning btn-sm"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="${'#editarEmpleadoModal' + empleado.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm ms-2"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="${'#eliminarEmpleadoModal' + empleado.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginación -->
+            <div id="pagination-container">
+                <nav th:replace="paginator-nav :: paginator"></nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Empleado -->
+<div class="modal fade" id="agregarEmpleadoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus me-2"></i>Agregar Empleado
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="agregarEmpleadoForm" th:action="@{/empleados/agregar}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nombreAdd" class="form-label">Nombre</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="nombreAdd" name="nombre" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidoAdd" class="form-label">Apellido</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="apellidoAdd" name="apellido" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cedulaAdd" class="form-label">Cédula</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                            <input type="text" class="form-control" id="cedulaAdd" name="cedula" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefonoAdd" class="form-label">Teléfono</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="text" class="form-control" id="telefonoAdd" name="telefono" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Empleado -->
+<div th:each="empleado : ${empleados}" th:id="${'editarEmpleadoModal' + empleado.id}" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Editar Empleado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form th:action="@{/empleados/editar/{id}(id=${empleado.id})}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nombreEdit" class="form-label">Nombre</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="nombreEdit" name="nombre"
+                                   th:value="${empleado.nombre}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidoEdit" class="form-label">Apellido</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="apellidoEdit" name="apellido"
+                                   th:value="${empleado.apellido}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cedulaEdit" class="form-label">Cédula</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                            <input type="text" class="form-control" id="cedulaEdit" name="cedula"
+                                   th:value="${empleado.cedula}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefonoEdit" class="form-label">Teléfono</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="text" class="form-control" id="telefonoEdit" name="telefono"
+                                   th:value="${empleado.telefono}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar Empleado -->
+<div th:each="empleado : ${empleados}" th:id="${'eliminarEmpleadoModal' + empleado.id}" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea eliminar al empleado
+                    <strong th:text="${empleado.nombre + ' ' + empleado.apellido}"></strong>?
+                </p>
+                <p class="text-danger">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a th:href="@{/empleados/eliminar/{id}(id=${empleado.id})}" class="btn btn-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+<script th:src="@{/js/listarEmpleado.js}"></script>
+
+</body>
+</html>

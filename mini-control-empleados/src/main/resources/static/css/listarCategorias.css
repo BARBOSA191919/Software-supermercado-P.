@@ -1,0 +1,210 @@
+/* Estilo para el botón superior */
+.top-center-button {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1000;
+}
+
+.top-center-button a {
+    background-color: #343A40;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.top-center-button a:hover {
+    background-color: #495057;
+    color: #fff;
+    transform: translateX(-50%) scale(1.05);
+}
+
+/* Estilo para el título del menú */
+.menu-section-title {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    margin-left: 16px;
+}
+
+/* Estilo del sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-right: 1px solid #dee2e6;
+    overflow-y: auto; /* Permitir scroll en el sidebar si hay muchas categorías */
+}
+
+/* Estilo de los enlaces del sidebar */
+.sidebar .nav-link {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #e9ecef;
+    padding-left: 20px;
+}
+
+/* Contenido principal */
+main {
+    padding: 15px;
+}
+
+.content {
+    width: 95%;
+    padding: 20px;
+}
+
+.content-section {
+    display: none;
+}
+
+.active-section {
+    display: block;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilo de las tarjetas */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    padding: 15px 20px;
+}
+
+/* Botón para agregar categoría */
+.btn-add-category {
+    margin: 15px;
+    width: calc(100% - 30px);
+}
+
+/* Estilo de la tabla */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    background-color: #f8f9fa;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.category-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+/* Estilo de los spans */
+span {
+    text-decoration: none;
+}
+
+.categoria-codigo {
+    font-size: 14px;
+    padding-right: 4px;
+    color: #0b0b0b;
+    font-weight: bold;
+}
+
+.nombre-categoria {
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    color: #000000;
+}
+
+/* Estilo del enlace de inventario */
+a {
+    text-decoration: none;
+}
+
+.enlace-inventario {
+    color: white;
+}
+
+/* Estilo específico para la paginación de categorías */
+#paginacion-categorias {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#paginacion-categorias .pagination {
+    justify-content: center;
+    margin: 0; /* Eliminar márgenes adicionales */
+}
+
+/* Estilo específico para la paginación de productos */
+#paginacion-productos {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#paginacion-productos .pagination {
+    justify-content: center;
+    margin: 0;
+}
+
+/* Asegurar que el contenedor de la lista de categorías tenga espacio */
+#lista-categorias {
+    margin-bottom: 20px;
+}
+
+/* Asegurar que el contenedor de productos sea relativo */
+#productos {
+    position: relative;
+}
+
+/* Asegurar que el position-sticky funcione */
+.position-sticky {
+    position: sticky;
+    top: 20px;
+}
+
+/* listarCategorias.css */
+#buscador-productos {
+    max-width: 300px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Resto del CSS sin cambios */

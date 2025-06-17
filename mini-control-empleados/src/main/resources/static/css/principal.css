@@ -1,0 +1,242 @@
+
+.dark-mode {
+    --primary-color: #34495e;
+    --accent-color: #1abc9c;
+    --hover-color: #16a085;
+    --bg-light: #2c3e50;
+    --text-color: #ecf0f1;
+    --sidebar-bg: #343a40;
+    --sidebar-text: #ecf0f1;
+    --card-bg: #343a40;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --accent-color: #3498db;
+    --hover-color: #2980b9;
+    --bg-light: #f8f9fa;
+    --text-color: #2c3e50;
+    --sidebar-bg: #343a40;
+    --sidebar-text: #ffffff;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 15px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+    --card-bg: #ffffff;
+}
+
+
+.menu-section-title {
+    color: rgba(255,255,255,0.6);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    margin-left: 16px;
+}
+body.dark-mode .main-content {
+    background: linear-gradient(135deg, #343a40 0%, #343a40 100%);
+    color: var(--text-color);
+}
+
+body.dark-mode .icon-item {
+    background-color: var(--card-bg);
+}
+
+body.dark-mode .icon-item p {
+    color: #ecf0f1;
+}
+
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-light);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 300px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 20px 0;
+    font-size: 10px;
+    text-align: center;
+}
+
+.sidebar-header i {
+    margin-left: 5px;
+    margin-right: 10px;
+    font-size: 1.5rem;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    color: var(--sidebar-text);
+    font-size: 33px;
+    font-weight: bold;
+}
+
+.sidebar-menu {
+    flex-grow: 1;
+}
+
+.sidebar-menu a {
+    color: var(--sidebar-text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    transition: var(--transition);
+    font-size: 19px;
+    margin-left: 16px;
+}
+
+.sidebar-menu a:hover {
+    background-color: rgba(143, 141, 141);
+}
+
+.sidebar-menu a i {
+    margin-right: 16px;
+    width: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+.sidebar-footer {
+    margin-left: 53px;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-footer .btn-logout {
+    width: 100%;
+    background-color: rgba(255,255,255,0.1);
+    color: var(--sidebar-text);
+    border: none;
+}
+
+.sidebar-footer .btn-logout:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* Main Content Styles */
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.main-header {
+    background-color: var(--card-bg);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.main-header .user-info {
+    margin-right: 1rem;
+    color: var(--text-color);
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 2rem 2rem 0 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+}
+
+.icon-item {
+    background: var(--card-bg);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    position: relative;
+    height: 145px/* Add this to position the text overlay correctly */
+}
+
+.icon-item a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+
+.icon-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    opacity: 0.9;
+    filter: brightness(0.6);
+}
+
+.icon-item p {
+    position: absolute;
+    bottom: 47px;
+    left: 0;
+    color: #ffffff;
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 1;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -250px;
+        z-index: 1000;
+    }
+
+    .main-wrapper {
+        width: 100%;
+    }
+}
+
+h2{
+    text-align: center;
+}
+
+.footer{
+    padding: 25px;
+    text-align: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}

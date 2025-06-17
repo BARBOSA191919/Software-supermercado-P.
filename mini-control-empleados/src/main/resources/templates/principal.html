@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:fragment="header">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/3082/3082011.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Gestiones principales</title>
+    <link rel="stylesheet" th:href="@{/css/principal.css}">
+
+</head>
+<body>
+<!-- Header con Navbar -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h2>Supermercado Fruver</h2>
+    </div>
+
+    <div class="sidebar-menu">
+        <div class="menu-section-title">MENU PRINCIPAL</div>
+        <div sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+            <a href="#" onclick="abrirVentana(this.href)" th:href="@{/proveedores/listar}">
+                <i class="fas fa-truck"></i> Proveedores
+            </a>
+        </div>
+
+        <div sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+            <a href="#" onclick="abrirVentana(this.href)" th:href="@{/empleados/listar}">
+                <i class="bi bi-person-badge"></i> Empleados
+            </a>
+        </div>
+
+        <div sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+            <a href="#" onclick="abrirVentana(this.href)" th:href="@{/turnos/listar}">
+                <i class="bi bi-clock-history"></i> Turnos
+            </a>
+        </div>
+
+
+        <a href="#" onclick="abrirVentana(this.href)" th:href="@{/clientes/listar}">
+            <i class="fas fa-user"></i> Clientes
+        </a>
+
+        <div sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+            <a href="#" th:href="@{/usuarios/listar}">
+                <i class="fas fa-user-shield"></i> Roles
+            </a>
+        </div>
+
+        <div class="menu-section-title mt-3">CONFIGURACIÓN</div>
+
+        <a href="#" id="theme-toggle">
+            <i class="fas fa-adjust"></i> Cambiar Tema
+        </a>
+    </div>
+
+    <div class="sidebar-footer">
+        <form id="logoutForm" class="px-4" th:action="@{/logout}" method="post">
+            <button type="button" class="btn btn-danger btn-block" onclick="confirmLogout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+    <!-- Main Header -->
+    <div class="main-header">
+            <span class="user-info">
+                <i class="fas fa-user-circle me-2"></i>
+                Bienvenido, <strong><span sec:authentication="principal.username"></span></strong>
+            </span>
+    </div>
+
+    <div class="main-content" >
+        <div class="icon-grid">
+            <!-- Sales -->
+            <div class="icon-item" sec:authorize="hasAnyRole('CAJERO', 'ADMIN', 'GERENTE')">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/vender/}">
+                    <img th:src="@{/img/product/Principal/ventas.webp}" alt="Ventas">
+                    <p>VENTAS</p>
+                </a>
+            </div>
+
+            <!-- Fruver -->
+            <div class="icon-item" sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/Fruvert}">
+                    <img th:src="@{/img/product/Principal/fruver.webp}" alt="Fruver">
+                    <p>FRUVER</p>
+                </a>
+            </div>
+
+            <!-- Productos -->
+            <div class="icon-item" sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/productos/agregar}">
+                    <img th:src="@{/img/product/Principal/productos.webp}" alt="Productos">
+                    <p>PRODUCTOS</p>
+                </a>
+            </div>
+
+            <!-- Categorías -->
+            <div class="icon-item" sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/listarCategorias}">
+                    <img th:src="@{/img/product/Principal/categoria.webp}" alt="Categorías">
+                    <p>CATEGORIAS</p>
+                </a>
+            </div>
+
+            <!-- Inventarios - Solo visible para ADMIN y GERENTE -->
+            <div class="icon-item" sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/Inventario}">
+                    <img th:src="@{/img/product/Principal/inventario.webp}" alt="Inventarios">
+                    <p>INVENTARIO</p>
+                </a>
+            </div>
+
+            <!-- Devoluciones POS -->
+            <div class="icon-item">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/devoluciones/listar}">
+                    <img th:src="@{/img/product/Principal/devoluciones.webp}" alt="Devoluciones">
+                    <p>DEVOLUCIONES</p>
+                </a>
+            </div>
+
+
+            <!-- Facturas Electrónicas -->
+            <div class="icon-item" sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/facturas/listar}">
+                    <img th:src="@{/img/product/Principal/factura.webp}" alt="Facturas Electrónicas">
+                    <p>FACTURAS ELECTRÓNICA</p>
+                </a>
+            </div>
+
+            <!-- Reportes (continued from previous section) -->
+            <div class="icon-item" sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/Reportes/}">
+                    <img th:src="@{/img/product/Principal/reportes.webp}" alt="Reportes">
+                    <p>REPORTES</p>
+                </a>
+            </div>
+
+            <!-- Contabilidad -->
+            <div class="icon-item" sec:authorize="hasAnyRole('ADMIN', 'GERENTE', 'CONTADOR')">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/Contabilidad}">
+                    <img th:src="@{/img/product/Principal/contabilidad.webp}" alt="Contabilidad">
+                    <p>CONTABILIDAD</p>
+                </a>
+            </div>
+
+        </div>
+        <center><div class="contenido-footer">
+            <span class="span-footer">© 2024 Supermercado</span>
+        </div></center>
+
+    </div>
+
+    <footer>
+
+    </footer>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
+
+<script th:src="@{/js/principal.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Ventas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/3082/3082011.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" th:href="@{/css/vender.css}">
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">
+                <i class="fas fa-store"></i> Mi Tienda
+                <!-- Botón de volver atrás -->
+                <div class="nav-actions ">
+            <span class="navbar-text me-3">
+                <i class="bi bi-person-circle"></i>
+                <strong><span sec:authentication="principal.username"></span></strong>
+            </span>
+
+                </div>
+                <div class="mt-3">
+                    <a href="javascript:history.back()" class="btn btn-secondary btn-block">
+                        <i class="fas fa-arrow-left mr-2"></i> Volver Atrás
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <ul class="list-unstyled components">
+            <div class="menu-section-title">MENU PRINCIPAL</div>
+            <li class="menu-item">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/vender/}">
+                    <i class="fas fa-shopping-cart"></i> Vender
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/ventas/}">
+                    <i class="fas fa-receipt"></i> Ventas
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="#" data-toggle="modal" data-target="#agregarClienteModal">
+                    <i class="fas fa-users"></i>
+                    Clientes
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#agregarDevolucionModal">
+                    <i class="bi bi-box-arrow-in-left"></i> Devoluciones
+                </a>
+            </li>
+            <li class="menu-item">
+                <div sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+
+                <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/reportes/}">
+                    <i class="fas fa-chart-line"></i> Reportes
+                </a>
+                </div>
+            </li>
+        </ul>
+
+        <div class="menu-section-title mt-3">CONFIGURACIÓN</div>
+        <ul class="list-unstyled">
+            <li>
+                <form id="logoutForm" class="px-4" th:action="@{/logout}" method="post">
+                    <button type="button" class="btn btn-danger btn-block" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-dark">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="top-center-button1">
+                    <a th:href="@{/principal}">
+                        <i class="fas fa-home"></i>
+                    </a>
+                </div>
+
+                <h4 class="mb-0 ml-3">Vender Productos</h4>
+            </div>
+        </nav>
+
+        <main layout:fragment="contenido">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+
+                        <div th:if="${mensaje}" id="mensajeAlert"
+                             th:data-mensaje="${mensaje}"
+                             th:data-clase="${clase}"
+                             style="display: none;">
+                        </div>
+
+                        <div class="card ">
+                            <div class="card-position">
+
+                                <div class="card-body">
+                                    <form th:object="${producto}" th:action="@{/vender/agregar}" method="post">
+                                        <div class="form-group">
+                                            <label for="codigoNombre" class="font-weight-bold">
+                                                <i class="fas fa-barcode mr-2"></i>Código de barras o Nombre del producto
+                                            </label>
+                                            <div class="input-group">
+                                                <input autofocus autocomplete="off" th:field="*{codigo}" id="codigoNombre"
+                                                       placeholder="Escanea el código o escribe el nombre" type="text"
+                                                       class="form-control" onkeyup="buscarProductos(this.value);">
+                                                <div class="input-group-append">
+                                            <span class="input-group-text bg-primary text-white">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+
+                                    <div id="resultados" class="list-group custom-results"></div>
+                                </div>
+
+
+                                <form th:object="${venta}" th:action="@{/vender/terminar}" method="post">
+                                    <!-- Totales centrados -->
+                                    <div class="btn_total">
+                                        <div id="subtotal-container" class="total-container bg-info text-white rounded text-center p-3 mx-3">
+                                            <h5 class="btn-total_title" th:text="${'Subtotal: $' + #numbers.formatDecimal(subtotal, 1, 'POINT', 0, 'COMMA')}"></h5>
+                                        </div>
+                                        <div id="total-container" class="total-container bg-success text-white rounded text-center p-3 mx-3">
+                                            <h5 class="btn-total_title" th:text="${'Total: $' + #numbers.formatDecimal(total, 1, 'POINT', 0, 'COMMA')}"></h5>
+                                        </div>
+                                    </div>
+                                </form>
+                                <input type="hidden" id="totalValue" th:value="${total}" />
+
+                            </div>
+                        </div>
+
+                        <!--tabla de productos -->
+
+                        <div class="table-container table-responsive">
+                            <table class="table table-bordered table-hover" id="carrito-table">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Precio Final</th>
+                                    <th>Iva</th>
+                                    <th>DTO</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th>Acción</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="producto, iterador : ${session.carrito}">
+                                    <td th:text="${producto.codigo}"></td>
+                                    <td th:text="${producto.nombre}"></td>
+                                    <td th:text="${#numbers.formatDecimal(producto.precio_final, 1, 'POINT', 0, 'COMMA') + ' $'}"></td>
+                                    <td th:text="${producto.iva + ' %'}"></td>
+                                    <td th:text="${producto.descuento + ' %'}"></td>
+                                    <td>
+                                        <div class="input-group input-group-sm">
+                                            <button class="btn btn-sm btn-secondary" th:onclick="'disminuirCantidad(' + ${iterador.index} + ')'">-</button>
+                                            <input type="number" th:value="${producto.cantidad}" class="form-control form-control-sm text-center cantidad-input" style="width: 45px;" min="1" step="1" th:data-indice="${iterador.index}" th:data-stock="${producto.existencia}">
+                                            <button class="btn btn-sm btn-secondary" th:onclick="'aumentarCantidad(' + ${iterador.index} + ')'">+</button>
+                                        </div>
+                                    </td>
+                                    <td th:text="${#numbers.formatDecimal(producto.total, 1, 'POINT', 0, 'COMMA') + ' $'}"></td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" th:onclick="'quitarProducto(' + ${iterador.index} + ')'">
+                                            <i class="fa fa-trash mr-1"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Formulario de pago -->
+                        <form th:object="${venta}" th:action="@{/vender/terminar}" method="post" id="terminarVentaForm" onsubmit="return confirmarTerminarVenta(event);" class="container-fluid contenedor_principal">
+                            <!-- Contenedor principal con sombra y borde redondeado -->
+                            <div class="shadow-lg container-position rounded-lg p-4 bg-white">
+                                <!-- Grid principal -->
+                                <div class="valor-position g-4">
+                                    <div class="efectivo">
+                                        <div class="seleccion">
+                                            <label for="efectivo" class="form-label fw-bold mb-2">
+                                                <i class="fas fa-money-bill-wave text-success mr-2"></i>
+                                                Efectivo Recibido
+                                            </label>
+                                            <div class="input-group input-group-lg">
+                                                <span class="input-group-text bg-success text-white">$</span>
+                                                <input type="number"
+                                                       th:field="*{efectivo}"
+                                                       class="form-control border-success"
+                                                       id="efectivo"
+                                                       placeholder="0.0"
+                                                       oninput="calcularCambio()"
+                                                       required>
+                                            </div>
+                                            <div id="efectivoError" class="text-danger mt-2 small" style="display: none;"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Columna de cambio -->
+                                    <div class="cambio">
+                                        <div class=" seleccion">
+                                            <label for="cambio" class="form-label fw-bold mb-2">
+                                                <i class="fas fa-hand-holding-usd text-primary mr-2"></i>
+                                                Cambio a Devolver
+                                            </label>
+                                            <div class="input-group input-group-lg">
+                                                <span class="input-group-text bg-primary text-white">$</span>
+                                                <input type="text"
+                                                       th:field="*{cambio}"
+                                                       class="form-control bg-light border-primary"
+                                                       id="cambio"
+                                                       placeholder="0.0"
+                                                       readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Actualizar la sección de selects en el formulario -->
+                                    <div class="cliente">
+                                        <label for="cliente" class="font-weight-bold">
+                                            <i class="fas fa-user mr-2"></i>Seleccionar Cliente
+                                        </label>
+
+                                        <select name="clienteId" class="form-control " id="cliente" required>
+                                            <option value="">Seleccione Cliente</option>
+                                            <option th:each="cliente : ${clientes}"
+                                                    th:value="${cliente.id}"
+                                                    th:text="${cliente.nombreCliente + ' ' + cliente.apellido}"
+                                                    th:selected="${session.selectedClienteId != null && session.selectedClienteId == cliente.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="turnos">
+                                        <label for="turno" class="font-weight-bold">
+                                            <i class="fas fa-clock mr-2"></i>Turnos
+                                        </label>
+                                        <select name="turnoId" class="form-control" id="turno" required>
+                                            <option value="">Seleccione Turno</option>
+                                            <option th:each="turno : ${turnos}"
+                                                    th:value="${turno.id}"
+                                                    th:text="${turno.nombre + ' - Caja: ' + turno.caja + ' - user: ' + username}"
+                                                    th:selected="${turnoSeleccionado != null && turnoSeleccionado.id == turno.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="d-flex flex-column justify-content-center gap-3">
+                                <button type="submit" class="btn btn-success btn-lg px-5 shadow-sm">
+                                    <i class="fa fa-check mr-2"></i>
+                                    Terminar Venta
+                                </button>
+
+                                <button type="button" class="btn btn-primary btn-lg px-5 shadow-sm"
+                                        id="btn-actualizar" style="display: none">
+                                    <i class="fa fa-refresh mr-2"></i>
+                                    Actualizar Venta
+                                </button>
+
+                                <button type="button" class="btn btn-danger btn-lg px-5 shadow-sm" onclick="cancelarVenta()">
+                                    <i class="fa fa-trash mr-2"></i> Cancelar Venta
+                                </button>
+                            </div>
+
+                        </form>
+
+                        <!-- Botones de acción -->
+                        <form th:object="${venta}" th:action="@{/vender/terminar}" method="post">
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal Agregar Devolución -->
+
+<div class="modal fade" id="agregarDevolucionModal" tabindex="-1" aria-labelledby="agregarDevolucionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agregarDevolucionModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>Agregar Devolución
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/devoluciones/agregar}" method="post">
+                <div class="modal-body">
+
+
+                    <!-- Campo de búsqueda por venta -->
+                    <div class="row mb-3" id="campoBusquedaVenta">
+                        <div class="col-md-12">
+                            <label for="idVenta" class="form-label">
+                                <i class="fas fa-hashtag me-2"></i>ID de la Venta
+                            </label>
+                            <input type="number" class="form-control" id="idVenta" placeholder="Ingrese el Número de la venta">
+                            <div id="resultadosBusquedaVenta" class="mt-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Fila 2: Tipo de Producto -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="tipoProductoAgregar" class="form-label">
+                                <i class="fas fa-tag me-2"></i>Tipo de Producto
+                            </label>
+                            <select class="form-select" id="tipoProductoAgregar" name="tipoProducto" required>
+                                <option value="" disabled selected>Seleccione un tipo</option>
+                                <option value="PRODUCTO">Producto</option>
+                                <option value="FRUTA">Fruta</option>
+                                <option value="VERDURA">Verdura</option>
+                                <option value="CARNE">Carne</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Fila 2: Código y Nombre del Producto -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="codigoProductoAgregar" class="form-label">
+                                <i class="fas fa-barcode me-2"></i>Código del Producto
+                            </label>
+                            <input type="text" class="form-control" id="codigoProductoAgregar" name="codigoProducto" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombreProductoAgregar" class="form-label">
+                                <i class="fas fa-box me-2"></i>Nombre del Producto
+                            </label>
+                            <input type="text" class="form-control" id="nombreProductoAgregar" name="nombreProducto" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Fila 3: Precio Unitario y Cantidad -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="precioUnitarioAgregar" class="form-label">
+                                <i class="fas fa-dollar-sign me-2"></i>Precio Unitario
+                            </label>
+                            <input type="number" step="0.01" class="form-control" id="precioUnitarioAgregar" name="precioUnitario" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cantidadDevolucionAdd" class="form-label">
+                                <i class="fas fa-calculator me-2"></i>Cantidad
+                            </label>
+                            <input type="number" class="form-control" id="cantidadDevolucionAdd" name="cantidad" min="1" required>
+                        </div>
+                    </div>
+
+                    <!-- Fila 4: Precio Final -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="precioFinalAgregar" class="form-label">
+                                <i class="fas fa-money-bill-wave me-2"></i>Precio Final
+                            </label>
+                            <input type="number" step="0.01" class="form-control" id="precioFinalAgregar" name="precioFinal" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Fila 5: Fecha y Motivo -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fechaDevolucionAdd" class="form-label">
+                                <i class="fas fa-calendar me-2"></i>Fecha
+                            </label>
+                            <input type="date" class="form-control" id="fechaDevolucionAdd" name="fecha" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="motivoDevolucionAdd" class="form-label">
+                                <i class="fas fa-comment me-2"></i>Motivo
+                            </label>
+                            <select class="form-select" id="motivoDevolucionAdd" name="motivo" required>
+                                <option value="" disabled selected>Seleccione un motivo</option>
+                                <option value="Vencido o defectuoso">Vencido o defectuoso</option>
+                                <option value="cambio">Cambio</option>
+                                <option value="producto incompleto">Producto incompleto</option>
+                                <option value="no coincide descripcion">No cumple con la descripción</option>
+                                <option value="error en el pedido">Error en el pedido</option>
+                                <option value="mal funcionamiento">Funcionamiento incorrecto</option>
+                                <option value="baja calidad">Insatisfacción con la calidad</option>
+                                <option value="color diferente">Color diferente al mostrado</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="agregarClienteModal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">
+                <i class="fas fa-plus-circle me-2"></i>Agregar Cliente
+            </h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <form id="clienteForm" th:action="@{/clientes/agregar}" method="post">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="nombreClienteAdd" class="form-label">Nombre del Cliente</label>
+                    <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-user"></i>
+            </span>
+                        <input type="text" class="form-control" id="nombreClienteAdd" name="nombreCliente" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="apellidoAdd" class="form-label">Apellido</label>
+                    <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-user"></i>
+            </span>
+                        <input type="text" class="form-control" id="apellidoAdd" name="apellido" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="cedulaAdd" class="form-label">Cédula</label>
+                    <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-id-card"></i>
+            </span>
+                        <input type="text" class="form-control" id="cedulaAdd" name="cedula" required>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save me-2"></i>Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
+<script th:src="@{/js/vender.js}"></script>
+
+
+</body>
+</html>

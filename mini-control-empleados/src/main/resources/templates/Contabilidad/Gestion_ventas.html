@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .active-section {
+        display: block;
+    }
+    </style>
+</head>
+<body>
+<div id="ventas" class="content-section">
+    <h2>Gestión de Ventas</h2>
+    <p>Esta sección proporciona herramientas y análisis para la gestión financiera de las ventas del supermercado.</p>
+
+    <div class="accordion" id="gestionVentasAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingResumenFinanciero">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseResumenFinanciero" aria-expanded="false" aria-controls="collapseResumenFinanciero">
+                    Resumen Financiero
+                </button>
+            </h2>
+            <div id="collapseResumenFinanciero" class="accordion-collapse collapse" aria-labelledby="headingResumenFinanciero" data-bs-parent="#gestionVentasAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li><a th:href="@{/ventas_totales}" class="resumen-financiero-link">Ventas totales por período</a></li>
+                        <li><a th:href="@{/comparativas}" class="resumen-financiero-link">Comparativas entre períodos</a></li>
+                        <li><a th:href="@{/tendencias}" class="resumen-financiero-link">Análisis de tendencias</a></li>
+                        <li><a th:href="@{/tendencias}" class="resumen-financiero-link">Productos más y menos vendidos</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingMargenesRentabilidad">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMargenesRentabilidad" aria-expanded="false" aria-controls="collapseMargenesRentabilidad">
+                    Márgenes y Rentabilidad
+                </button>
+            </h2>
+            <div id="collapseMargenesRentabilidad" class="accordion-collapse collapse" aria-labelledby="headingMargenesRentabilidad" data-bs-parent="#gestionVentasAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Margen bruto por producto/categoría</li>
+                        <li>Análisis de rentabilidad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingDescuentosPromociones">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescuentosPromociones" aria-expanded="false" aria-controls="collapseDescuentosPromociones">
+                    Descuentos y Promociones
+                </button>
+            </h2>
+            <div id="collapseDescuentosPromociones" class="accordion-collapse collapse" aria-labelledby="headingDescuentosPromociones" data-bs-parent="#gestionVentasAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Impacto en ventas</li>
+                        <li>Efectividad de estrategias</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingMetodosPago">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMetodosPago" aria-expanded="false" aria-controls="collapseMetodosPago">
+                    Métodos de Pago
+                </button>
+            </h2>
+            <div id="collapseMetodosPago" class="accordion-collapse collapse" aria-labelledby="headingMetodosPago" data-bs-parent="#gestionVentasAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Distribución por tipo de pago</li>
+                        <li>Análisis de comisiones</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingDevolucionesReembolsos">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDevolucionesReembolsos" aria-expanded="false" aria-controls="collapseDevolucionesReembolsos">
+                    Devoluciones y Reembolsos
+                </button>
+            </h2>
+            <div id="collapseDevolucionesReembolsos" class="accordion-collapse collapse" aria-labelledby="headingDevolucionesReembolsos" data-bs-parent="#gestionVentasAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Registro y análisis</li>
+                        <li>Impacto en ventas netas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingHerramientasAnalisis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHerramientasAnalisis" aria-expanded="false" aria-controls="collapseHerramientasAnalisis">
+                    Herramientas de Análisis
+                </button>
+            </h2>
+            <div id="collapseHerramientasAnalisis" class="accordion-collapse collapse" aria-labelledby="headingHerramientasAnalisis" data-bs-parent="#gestionVentasAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Generación de informes personalizados</li>
+                        <li>KPIs de ventas (ticket promedio, tasa de conversión, etc.)</li>
+                        <li>Proyecciones de ventas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingIntegracionInventario">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntegracionInventario" aria-expanded="false" aria-controls="collapseIntegracionInventario">
+                    Integración con Inventario
+                </button>
+            </h2>
+            <div id="collapseIntegracionInventario" class="accordion-collapse collapse" aria-labelledby="headingIntegracionInventario" data-bs-parent="#gestionVentasAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Alertas de stock bajo</li>
+                        <li>Sugerencias de reposición</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingAnalisisTemporadas">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnalisisTemporadas" aria-expanded="false" aria-controls="collapseAnalisisTemporadas">
+                    Análisis de Temporadas
+                </button>
+            </h2>
+            <div id="collapseAnalisisTemporadas" class="accordion-collapse collapse" aria-labelledby="headingAnalisisTemporadas" data-bs-parent="#gestionVentasAccordion">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Impacto de eventos especiales</li>
+                        <li>Ventas por temporada</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="resumen-financiero-content"></div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+      const contentSections = document.querySelectorAll('.content-section');
+      const resumenFinancieroLinks = document.querySelectorAll('.resumen-financiero-link');
+      const resumenFinancieroContent = document.getElementById('resumen-financiero-content');
+      const gestionVentasAccordion = document.getElementById('gestionVentasAccordion');
+
+
+      function showSection(sectionId) {
+        contentSections.forEach(section => section.style.display = 'none');
+        const sectionToShow = document.getElementById(sectionId);
+        if (sectionToShow) {
+          sectionToShow.style.display = 'block';
+        }
+      }
+
+      sidebarLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const sectionId = this.getAttribute('data-section');
+          showSection(sectionId);
+
+          // Si es la sección de ventas, mostrar el acordeón
+          if (sectionId === 'ventas') {
+            gestionVentasAccordion.style.display = 'block';
+            resumenFinancieroContent.style.display = 'none';
+          }
+        });
+      });
+
+      resumenFinancieroLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const url = this.getAttribute('href');
+
+          fetch(url)
+            .then(response => response.text())
+            .then(html => {
+              gestionVentasAccordion.style.display = 'none';
+              resumenFinancieroContent.innerHTML = html;
+              resumenFinancieroContent.style.display = 'block';
+            })
+            .catch(error => {
+              console.error('Error al cargar el contenido:', error);
+              resumenFinancieroContent.innerHTML = '<p>Error al cargar el contenido. Por favor, intente de nuevo.</p>';
+              resumenFinancieroContent.style.display = 'block';
+              gestionVentasAccordion.style.display = 'none';
+            });
+        });
+      });
+
+
+      showSection('ventas');
+    });
+
+    sidebarLinks.forEach(link => {
+  link.addEventListener('click', function (e) {
+    e.preventDefault();
+    const sectionId = this.getAttribute('data-section');
+    showSection(sectionId);
+
+    if (sectionId === 'ventas') {
+      gestionVentasAccordion.style.display = 'block';
+      resumenFinancieroContent.style.display = 'none';
+    } else {
+      // Para otras secciones, ocultar tanto el acordeón como el resumen financiero
+      gestionVentasAccordion.style.display = 'none';
+      resumenFinancieroContent.style.display = 'none';
+    }
+  });
+});
+</script>
+</body>
+</html>

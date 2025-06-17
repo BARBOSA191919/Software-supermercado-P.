@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/3082/3082011.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title th:text="${titulo}">Listado de Fruvert</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/fruvert.css}">
+
+</head>
+<body>
+<!-- Botón del sidebar -->
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="sidebar-title">Fruver y Carnes</span>
+    </div>
+
+    <div class="menu-section-title">MENU PRINCIPAL </div>
+    <a href="javascript:void(0);" class="nav-link" onclick="abrirVentana(this.href)" th:href="@{/listarFruvert}">
+        <i class="fas fa-apple-alt me-2"></i> Frutas
+    </a>
+
+    <a href="javascript:void(0);" class="nav-link" onclick="abrirVentana(this.href)" th:href="@{/listarCarnes}">
+        <i class="fas fa-drumstick-bite me-2"></i> Carnes
+    </a>
+
+    <a href="javascript:void(0);" class="nav-link" onclick="abrirVentana(this.href)" th:href="@{/listarVerduras}">
+        <i class="fas fa-carrot me-2"></i> Verduras
+    </a>
+
+    <a href="javascript:void(0);" class="nav-link" onclick="abrirVentana(this.href)" th:href="@{/vender/}">
+        <i class="fas fa-shopping-cart"></i> Ventas
+    </a>
+
+    <a href="javascript:void(0);" class="nav-link" onclick="abrirVentana(this.href)" th:href="@{/Inventario}">
+        <i class="fas fa-chart-line"></i> Inventario
+    </a>
+
+    <div class="menu-section-title mt-3">CONFIGURACIÓN</div>
+
+    <form th:action="@{/logout}" class="btn-cerrarSesion" method="post">
+        <button class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
+    </form>
+</div>
+<!-- Contenido principal -->
+<div class="main-content" id="main-content">
+
+    <div class="header-title">Gestión de Fruvert-Carnes-Verduras</div>
+    <div class="top-center-button1">
+        <a th:href="@{/principal}">
+            <i class="fas fa-home"></i>
+        </a>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="category-card" >
+            <a href="javascript:void(0); " class="nav-link"  onclick="abrirVentana(this.href)" th:href="@{/listarFruvert}">
+                <img th:src="@{/img/product/Principal fruvert/fruta.webp}" alt="Contabilidad">
+                <div class="category-card-content" >
+                    <h3>Frutas Frescas</h3>
+                    <p>Selección premium de frutas cultivadas con pasión y cuidado.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="category-card">
+            <a href="javascript:void(0); " class="nav-link"  onclick="abrirVentana(this.href)" th:href="@{/listarCarnes}">
+                <img th:src="@{/img/product/Principal fruvert/carne.webp}" alt="Contabilidad">
+                <div class="category-card-content">
+                    <h3>Carnes Selectas</h3>
+                    <p>Cortes de primera calidad para los paladares más exigentes.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="category-card">
+            <a href="javascript:void(0); " class="nav-link"  onclick="abrirVentana(this.href)" th:href="@{/listarVerduras}">
+                <img th:src="@{/img/product/Principal fruvert/verdura.webp}" alt="Contabilidad">
+                <div class="category-card-content">
+                    <h3>Verduras Orgánicas</h3>
+                    <p>Verduras frescas directamente del campo a tu mesa.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/fruvert.js}"></script>
+<!-- Scripts de Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

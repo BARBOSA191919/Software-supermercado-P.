@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Clientes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/3082/3082011.png" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/css/listarClientes.css}">
+</head>
+<body>
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-text">
+        <i class="fas fa-users"></i> Sistema de Clientes
+        <div class="nav-actions">
+          <span class="navbar-text me-3">
+            <i class="bi bi-person-circle"></i>
+            <strong><span sec:authentication="principal.username"></span></strong>
+          </span>
+        </div>
+
+      </div>
+    </div>
+    <ul class="list-unstyled components">
+      <div class="menu-section-title">MENÚ PRINCIPAL</div>
+      <li class="menu-item" sec:authorize="hasAnyRole('ADMIN', 'GERENTE')">
+        <a th:href="@{/clientes/listar}">
+          <i class="fas fa-users me-2"></i> Lista de Clientes
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#agregarClienteModal">
+          <i class="fas fa-plus-circle me-2"></i> Agregar Cliente
+        </a>
+      </li>
+      <li class="menu-item">
+        <a th:href="@{/vender/}">
+          <i class="fas fa-shopping-cart"></i> Nueva Venta
+        </a>
+      </li>
+    </ul>
+    <div class="menu-section-title mt-3">CONFIGURACIÓN</div>
+    <ul class="list-unstyled">
+      <li>
+        <form id="logoutForm" class="px-4" th:action="@{/logout}" method="post">
+          <button type="button" class="btn btn-danger btn-block" onclick="confirmLogout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </button>
+        </form>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Content -->
+  <div id="content">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <button type="button" id="sidebarCollapse" class="btn btn-dark">
+          <i class="fas fa-bars"></i>
+        </button>
+
+      </div>
+    </nav>
+
+    <div class="container">
+      <h1 class="page-title">
+        <i class="fas fa-users me-3"></i> Sistema de Gestión de Clientes
+      </h1>
+      <div class="mt-3 mb-2">
+        <a href="javascript:void(0);" class="btn btn-primary btn-block" onclick="abrirVentana(this.href)" th:href="@{/principal}">
+          <i class="fas fa-home"></i> Menú Principal
+        </a>
+      </div>
+      <!-- Buscador y botón de PDF -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input type="text" class="form-control" id="buscadorClientes" placeholder="Buscar por nombre, apellido o cédula...">
+          </div>
+        </div>
+        <div class="col-md-6 text-end">
+          <button class="btn btn-success" onclick="clientesPDF()">
+            <i class="fas fa-file-pdf me-2"></i> Exportar a PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de Clientes -->
+      <div class="table-container" id="table-container">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th><i class="fas fa-hashtag me-2"></i>ID</th>
+            <th><i class="fas fa-user me-2"></i>Nombre</th>
+            <th><i class="fas fa-user me-2"></i>Apellido</th>
+            <th><i class="fas fa-id-card me-2"></i>Cédula</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="cliente : ${clientes}">
+            <td th:text="${cliente.id}"></td>
+            <td>
+              <div class="d-flex align-items-center">
+                <i class="fas fa-user me-2 text-primary"></i>
+                <span th:text="${cliente.nombreCliente}"></span>
+              </div>
+            </td>
+            <td th:text="${cliente.apellido}"></td>
+            <td th:text="${cliente.cedula}"></td>
+            <td class="text-center action-buttons">
+              <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" th:data-bs-target="${'#editarModal' + cliente.id}">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm ms-2" data-bs-toggle="modal" th:data-bs-target="${'#eliminarModal' + cliente.id}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Paginación -->
+      <div id="pagination-container">
+        <nav th:replace="paginator-nav :: paginator"></nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Agregar Cliente -->
+<div class="modal fade" id="agregarClienteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Agregar Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="agregarClienteForm" th:action="@{/clientes/agregar}" method="post">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nombreClienteAdd" class="form-label">Nombre del Cliente</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <input type="text" class="form-control" id="nombreClienteAdd" name="nombreCliente" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="apellidoAdd" class="form-label">Apellido</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <input type="text" class="form-control" id="apellidoAdd" name="apellido" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="cedulaAdd" class="form-label">Cédula</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+              <input type="text" class="form-control" id="cedulaAdd" name="cedula" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Cancelar
+          </button>
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-save me-2"></i>Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar Cliente -->
+<div th:each="cliente : ${clientes}" th:id="${'editarModal' + cliente.id}" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Editar Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form th:action="@{/clientes/editar/{id}(id=${cliente.id})}" method="post">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label th:for="${'nombreClienteEdit' + cliente.id}" class="form-label">Nombre del Cliente</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <input type="text" class="form-control" th:id="${'nombreClienteEdit' + cliente.id}"
+                     name="nombreCliente" th:value="${cliente.nombreCliente}" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label th:for="${'apellidoEdit' + cliente.id}" class="form-label">Apellido</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <input type="text" class="form-control" th:id="${'apellidoEdit' + cliente.id}"
+                     name="apellido" th:value="${cliente.apellido}" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label th:for="${'cedulaEdit' + cliente.id}" class="form-label">Cédula</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+              <input type="text" class="form-control" th:id="${'cedulaEdit' + cliente.id}"
+                     name="cedula" th:value="${cliente.cedula}" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-2"></i>Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar Cliente -->
+<div th:each="cliente : ${clientes}" th:id="${'eliminarModal' + cliente.id}" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-exclamation-triangle text-danger me-2"></i>Confirmar Eliminación
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Está seguro que desea eliminar al cliente <strong th:text="${cliente.nombreCliente} + ' ' + ${cliente.apellido}"></strong>?</p>
+        <p class="text-danger"><i class="fas fa-exclamation-circle me-2"></i>Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-2"></i>Cancelar
+        </button>
+        <a th:href="@{/clientes/eliminar/{id}(id=${cliente.id})}" class="btn btn-danger">
+          <i class="fas fa-trash me-2"></i>Eliminar
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script th:src="@{/js/listarClientes.js}"></script>
+</body>
+</html>

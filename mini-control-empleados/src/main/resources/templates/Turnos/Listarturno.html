@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Turnos</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/3082/3082011.png" type="image/x-icon">
+
+    <link rel="stylesheet" th:href="@{/css/listarTurno.css}">
+</head>
+<body>
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">
+                <i class="fas fa-clock me-2"></i> Gestión de Turnos
+                <div class="nav-actions">
+                    <span class="navbar-text me-3">
+                        <i class="bi bi-person-circle"></i>
+                        <strong><span sec:authentication="principal.username"></span></strong>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <ul class="list-unstyled components">
+            <div class="menu-section-title">MENU PRINCIPAL</div>
+            <li class="menu-item">
+                <a href="#" th:href="@{/usuarios/listar}" class="d-flex align-items-center">
+                    <i class="fas fa-users me-2"></i>
+                    <span>Lista de usuarios</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#agregarTurnoModal" class="d-flex align-items-center">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    <span>Agregar Turno</span>
+                </a>
+            </li>
+        </ul>
+        <div class="menu-section-title mt-3">CONFIGURACIÓN</div>
+        <ul class="list-unstyled">
+            <li>
+                <form id="logoutForm" class="px-4" th:action="@{/logout}" method="post">
+                    <button type="button" class="btn btn-danger btn-block" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+
+    <!-- Content -->
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-dark">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+            </div>
+        </nav>
+
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-clock me-3"></i>
+                Sistema de Gestión de Turnos
+            </h1>
+
+            <div class="position-content">
+                <div class="mt-3 mb-2 btn-menu">
+                    <a href="javascript:void(0);"class="btn btn-primary btn-block" onclick="abrirVentana(this.href)" th:href="@{/principal}">
+                        <i class="fas fa-home"></i> Menu Principal
+                    </a>
+                </div>
+                    <div class="search-posicion">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="buscadorTurnos" placeholder="Buscar por nombre o usuario...">
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button class="btn btn-success" onclick="turnosPDF()">
+                            <i class="fas fa-file-pdf me-2"></i>Exportar a PDF
+                        </button>
+                    </div>
+                </div>
+
+
+            <!-- Tabla de Turnos -->
+            <div class="table-container" id="table-container">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th><i class="fas fa-user me-2"></i>Nombre</th>
+                        <th><i class="fas fa-user me-2"></i>Usuario</th>
+                        <th><i class="fas fa-cash-register me-2"></i>Caja</th>
+                        <th><i class="fas fa-calendar me-2"></i>Fecha</th>
+                        <th><i class="fas fa-clock me-2"></i>Hora Inicio</th>
+                        <th><i class="fas fa-clock me-2"></i>Hora Salida</th>
+                        <th><i class="fas fa-money-bill me-2"></i>Base Dinero</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="turno : ${turnos}">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle me-2 text-primary"></i>
+                                <span th:text="${turno.nombre}"></span>
+                            </div>
+                        </td>
+                        <td th:text="${turno.usuario.username}"></td>
+                        <td th:text="${turno.caja}"></td>
+                        <td th:text="${#dates.format(turno.fecha, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${turno.horaInicio}"></td>
+                        <td th:text="${turno.horaSalida}"></td>
+                        <td th:text="${turno.baseDinero}"></td>
+                        <td class="text-center action-buttons">
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                    th:data-bs-target="${'#editarTurnoModal' + turno.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm ms-2" data-bs-toggle="modal"
+                                    th:data-bs-target="${'#eliminarTurnoModal' + turno.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginación -->
+            <div id="pagination-container">
+                <nav th:replace="paginator-nav :: paginator"></nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Turno -->
+<div class="modal fade" id="agregarTurnoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-clock-fill me-2"></i>Agregar Turno
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="agregarTurnoForm" th:action="@{/turnos/agregar}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nombreAdd" class="form-label">Nombre</label>
+                        <div class="input-group position-relative">
+                            <span class="input-group-text">
+                                <i class="bi bi-person-fill"></i>
+                            </span>
+                            <input type="text" class="form-control" id="nombreAdd"
+                                   name="nombre" placeholder="digite cedula o nombre" required
+                                   oninput="filterEmpleadosTurno(this.value)">
+                            <ul class="list-group position-absolute w-100 mt-1"
+                                id="empleadosSugerenciasTurno"
+                                style="top: 100%; z-index: 1000;"></ul>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="usuarioSelect" class="form-label">Usuario</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-person-circle"></i>
+                            </span>
+                            <select class="form-select" id="usuarioSelect" name="usuarioId" required>
+                                <option value="" disabled selected>Seleccione un usuario</option>
+                                <option th:each="usuario : ${usuarios}"
+                                        th:value="${usuario.id}"
+                                        th:text="${usuario.username}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cajaAdd" class="form-label">Caja</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-money-check-alt mr-2"></i>
+                            </span>
+                            <input type="text" class="form-control" id="cajaAdd" name="caja" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaAdd" class="form-label">Fecha</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-calendar-event"></i>
+                            </span>
+                            <input type="date" class="form-control" id="fechaAdd" name="fecha" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="horaInicioAdd" class="form-label">Hora de Inicio</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-clock"></i>
+                            </span>
+                            <input type="time" class="form-control" id="horaInicioAdd" name="horaInicio" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="horaSalidaAdd" class="form-label">Hora de Salida</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-clock-history"></i>
+                            </span>
+                            <input type="time" class="form-control" id="horaSalidaAdd" name="horaSalida">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="baseDineroAdd" class="form-label">Base de Dinero</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-cash"></i>
+                            </span>
+                            <input type="number" class="form-control" id="baseDineroAdd" name="baseDinero" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle-fill me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save-fill me-2"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Turno -->
+<div th:each="turno : ${turnos}" th:id="${'editarTurnoModal' + turno.id}" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-pencil-fill me-2"></i>Editar Turno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form th:action="@{/turnos/editar/{id}(id=${turno.id})}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label th:for="${'nombreEdit' + turno.id}" class="form-label">Nombre:</label>
+                        <div class="input-group position-relative">
+                            <span class="input-group-text">
+                                <i class="bi bi-person-fill"></i>
+                            </span>
+                            <input type="text" class="form-control"
+                                   th:id="${'nombreEdit' + turno.id}"
+                                   name="nombre"
+                                   th:value="${turno.nombre}"
+                                   th:oninput="'filterEmpleadosTurnoEdit(this.value, ' + ${turno.id} + ')'"
+                                   required>
+                            <ul class="list-group position-absolute w-100 mt-1"
+                                th:id="${'empleadosSugerenciasTurnoEdit' + turno.id}"
+                                style="top: 100%; z-index: 1000;"></ul>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="${'usuarioEdit' + turno.id}" class="form-label">Usuario</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-person-circle"></i>
+                            </span>
+                            <select class="form-select" th:id="${'usuarioEdit' + turno.id}" name="usuarioId" required>
+                                <option value="" disabled>Seleccione un usuario</option>
+                                <option th:each="usuario : ${usuarios}"
+                                        th:value="${usuario.id}"
+                                        th:text="${usuario.username}"
+                                        th:selected="${usuario.id == turno.usuario.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="${'cajaEdit' + turno.id}" class="form-label">Caja:</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-money-check-alt mr-2"></i>
+                            </span>
+                            <input type="text" class="form-control"
+                                   th:id="${'cajaEdit' + turno.id}"
+                                   name="caja"
+                                   th:value="${turno.caja}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="${'fechaEdit' + turno.id}" class="form-label">Fecha</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-calendar-event"></i>
+                            </span>
+                            <input type="date" class="form-control"
+                                   th:id="${'fechaEdit' + turno.id}"
+                                   name="fecha"
+                                   th:value="${#dates.format(turno.fecha, 'yyyy-MM-dd')}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="${'horaInicioEdit' + turno.id}" class="form-label">Hora de Inicio</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-clock"></i>
+                            </span>
+                            <input type="time" class="form-control"
+                                   th:id="${'horaInicioEdit' + turno.id}"
+                                   name="horaInicio"
+                                   th:value="${turno.horaInicio}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="${'horaSalidaEdit' + turno.id}" class="form-label">Hora de Salida</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-clock-history"></i>
+                            </span>
+                            <input type="time" class="form-control"
+                                   th:id="${'horaSalidaEdit' + turno.id}"
+                                   name="horaSalida"
+                                   th:value="${turno.horaSalida}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="${'baseDineroEdit' + turno.id}" class="form-label">Base de Dinero</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-cash"></i>
+                            </span>
+                            <input type="number" class="form-control"
+                                   th:id="${'baseDineroEdit' + turno.id}"
+                                   name="baseDinero"
+                                   th:value="${turno.baseDinero}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle-fill me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save-fill me-2"></i>Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar Turno -->
+<div th:each="turno : ${turnos}" th:id="${'eliminarTurnoModal' + turno.id}" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea eliminar el turno <strong th:text="${turno.nombre}"></strong>?</p>
+                <p class="text-danger"><i class="fas fa-exclamation-circle me-2"></i>Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <a th:href="@{/turnos/eliminar/{id}(id=${turno.id})}" class="btn btn-danger eliminar-turno-btn">
+                    <i class="fas fa-trash me-2"></i>Eliminar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+<script th:inline="javascript">
+    const empleados = /*[[${empleados}]]*/ [];
+
+    function filterEmpleadosTurno(query) {
+        const datalist = document.getElementById('empleadosSugerenciasTurno');
+        datalist.innerHTML = '';
+        if (!query) return;
+
+        const filteredEmpleados = empleados.filter(empleado =>
+            empleado.nombre.toLowerCase().includes(query.toLowerCase()) ||
+            empleado.cedula.includes(query)
+        );
+
+        filteredEmpleados.forEach(empleado => {
+            const item = document.createElement('li');
+            item.classList.add('list-group-item', 'list-group-item-action');
+            item.textContent = `${empleado.nombre} - ${empleado.cedula}`;
+            item.onclick = () => {
+                document.getElementById('nombreAdd').value = empleado.nombre + ' ' + empleado.cedula;
+                datalist.innerHTML = '';
+            };
+            datalist.appendChild(item);
+        });
+    }
+
+    function filterEmpleadosTurnoEdit(query, turnoId) {
+        const datalist = document.getElementById('empleadosSugerenciasTurnoEdit' + turnoId);
+        datalist.innerHTML = '';
+        if (!query) return;
+
+        const filteredEmpleados = empleados.filter(empleado =>
+            empleado.nombre.toLowerCase().includes(query.toLowerCase()) ||
+            empleado.cedula.includes(query)
+        );
+
+        filteredEmpleados.forEach(empleado => {
+            const item = document.createElement('li');
+            item.classList.add('list-group-item', 'list-group-item-action');
+            item.textContent = `${empleado.nombre} - ${empleado.cedula}`;
+            item.onclick = () => {
+                document.getElementById('nombreEdit' + turnoId).value = empleado.nombre + ' ' + empleado.cedula;
+                datalist.innerHTML = '';
+            };
+            datalist.appendChild(item);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        const sidebarCollapse = document.getElementById('sidebarCollapse');
+
+        // Aplicar estado inicial del sidebar
+        function applySidebarState() {
+            const savedState = localStorage.getItem('sidebarState') || 'open';
+            if (savedState === 'closed') {
+                sidebar.classList.remove('active');
+                content.classList.remove('active');
+                sidebarCollapse.style.left = '10px';
+            } else {
+                sidebar.classList.add('active');
+                content.classList.add('active');
+                sidebarCollapse.style.left = '265px';
+            }
+        }
+
+        // Toggle del sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            content.classList.toggle('active');
+            sidebarCollapse.style.left = sidebar.classList.contains('active') ? '265px' : '10px';
+            localStorage.setItem('sidebarState', sidebar.classList.contains('active') ? 'open' : 'closed');
+        }
+
+        applySidebarState();
+        sidebarCollapse.addEventListener('click', toggleSidebar);
+
+        // Función para actualizar la tabla y la paginación
+        function updateTable(search = '', page = 0) {
+            const tableUrl = `/turnos/listar?page=${page}` + (search ? `&search=${encodeURIComponent(search)}` : '');
+            fetch(tableUrl, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newTable = doc.querySelector('#table-container');
+                    document.querySelector('#table-container').innerHTML = newTable.innerHTML;
+
+                    // Actualizar la paginación por separado
+                    const paginationUrl = `/turnos/listar?page=${page}` + (search ? `&search=${encodeURIComponent(search)}` : '') + '&fragment=pagination';
+                    fetch(paginationUrl, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(response => response.text())
+                        .then(paginationHtml => {
+                            const paginationDoc = parser.parseFromString(paginationHtml, 'text/html');
+                            const newPagination = paginationDoc.querySelector('#pagination-container');
+                            const paginationContainer = document.querySelector('#pagination-container');
+                            if (paginationContainer && newPagination) {
+                                paginationContainer.innerHTML = newPagination.innerHTML;
+                            }
+
+                            // Reasignar eventos a los nuevos botones de editar y eliminar
+                            reassignModalEvents();
+                        })
+                        .catch(error => console.error('Error al actualizar paginación:', error));
+                })
+                .catch(error => console.error('Error al actualizar tabla:', error));
+        }
+
+        // Buscador
+        let searchTimeout = null;
+        document.getElementById('buscadorTurnos').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const search = this.value.trim();
+                updateTable(search);
+            }, 500);
+        });
+
+        // Agregar turno
+        document.getElementById('agregarTurnoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Turno Agregado', text: data.message, timer: 2000, showConfirmButton: false });
+                        bootstrap.Modal.getInstance(document.querySelector('#agregarTurnoModal')).hide();
+                        updateTable();
+                    } else {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error', text: data.error, timer: 2000, showConfirmButton: false });
+                    }
+                })
+                .catch(error => Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error', text: 'Error al agregar turno', timer: 2000, showConfirmButton: false }));
+        });
+
+        // Reasignar eventos a los modales de edición y eliminación
+        function reassignModalEvents() {
+            document.querySelectorAll('[id^="editarTurnoModal"] form').forEach(form => {
+                form.removeEventListener('submit', handleEditSubmit);
+                form.addEventListener('submit', handleEditSubmit);
+            });
+
+            document.querySelectorAll('[id^="eliminarTurnoModal"] .btn-danger').forEach(button => {
+                button.removeEventListener('click', handleDeleteClick);
+                button.addEventListener('click', handleDeleteClick);
+            });
+        }
+
+        function handleEditSubmit(e) {
+            e.preventDefault();
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Turno Actualizado', text: data.message, timer: 2000, showConfirmButton: false });
+                        bootstrap.Modal.getInstance(this.closest('.modal')).hide();
+                        updateTable();
+                    } else {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error', text: data.error, timer: 2000, showConfirmButton: false });
+                    }
+                })
+                .catch(error => Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error', text: 'Error al actualizar turno', timer: 2000, showConfirmButton: false }));
+        }
+
+        function handleDeleteClick(e) {
+            e.preventDefault();
+            const url = this.getAttribute('href');
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    [csrfHeader]: csrfToken
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Turno Eliminado',
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        bootstrap.Modal.getInstance(this.closest('.modal')).hide();
+                        updateTable(); // Actualiza la tabla
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message || 'Error al eliminar el turno',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                });
+        }
+
+        window.eliminarTurno = function(turnoId) {
+            fetch(`/turnos/eliminar/${turnoId}`, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Turno Eliminado', text: data.message, timer: 2000, showConfirmButton: false });
+                        bootstrap.Modal.getInstance(document.querySelector(`#eliminarTurnoModal${turnoId}`)).hide();
+                        updateTable();
+                    } else {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error', text: data.error, timer: 2000, showConfirmButton: false });
+                    }
+                })
+                .catch(error => Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error', text: 'Error al eliminar turno', timer: 2000, showConfirmButton: false }));
+        };
+
+        // Confirmar logout
+        window.confirmLogout = function() {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres cerrar sesión?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("logoutForm").submit();
+                }
+            });
+        };
+
+        // Exportar a PDF
+        window.turnosPDF = function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const filtroTexto = document.getElementById('buscadorTurnos').value.trim();
+            const url = `/turnos/todos${filtroTexto ? `?search=${encodeURIComponent(filtroTexto)}` : ''}`;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                },
+                credentials: 'same-origin'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`Error ${response.status}: ${text}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        Swal.fire({ icon: 'info', title: 'Sin datos', text: 'No hay turnos que coincidan con el criterio de búsqueda.' });
+                        return;
+                    }
+
+                    // Título
+                    doc.setFontSize(18);
+                    doc.text('Listado de Turnos', 14, 20);
+                    let yPos = 25;
+
+                    // Filtro de búsqueda (si existe)
+                    doc.setFontSize(10);
+                    if (filtroTexto) {
+                        doc.text(`Filtro de búsqueda: "${filtroTexto}"`, 14, yPos);
+                        yPos += 5;
+                    }
+
+                    // Definir columnas y filas
+                    const columns = ['ID', 'Nombre', 'Usuario', 'Caja', 'Fecha', 'Hora Inicio', 'Hora Salida', 'Base Dinero'];
+                    const rows = data.map(turno => [
+                        turno.id,
+                        turno.nombre,
+                        turno.usuario?.username || 'Sin usuario',
+                        turno.caja,
+                        turno.fecha ? turno.fecha.split('T')[0] : 'N/A', // Solo la fecha sin hora
+                        turno.horaInicio || 'N/A',
+                        turno.horaSalida || 'N/A',
+                        turno.baseDinero !== null ? turno.baseDinero.toString() : '0.0'
+                    ]);
+
+                    // Generar tabla con estilos
+                    doc.autoTable({
+                        head: [columns],
+                        body: rows,
+                        startY: yPos + 5,
+                        theme: 'striped',
+                        headStyles: { fillColor: [41, 128, 185], textColor: 255 }, // Azul para el encabezado
+                        styles: { fontSize: 9, cellPadding: 2.2 },
+                        columnStyles: {
+                            0: { cellWidth: 15 },  // ID
+                            1: { cellWidth: 30 },  // Nombre
+                            2: { cellWidth: 25 },  // Usuario
+                            3: { cellWidth: 20 },  // Caja
+                            4: { cellWidth: 25 },  // Fecha
+                            5: { cellWidth: 20 },  // Hora Inicio
+                            6: { cellWidth: 20 },  // Hora Salida
+                            7: { cellWidth: 25 }   // Base Dinero
+                        }
+                    });
+
+                    // Total de turnos y fecha
+                    const totalTurnos = rows.length;
+                    doc.setFontSize(10);
+                    doc.text(`Total de turnos: ${totalTurnos}`, 14, doc.lastAutoTable.finalY + 10);
+                    const fecha = new Date().toLocaleDateString();
+                    doc.text(`Generado el: ${fecha}`, 14, doc.lastAutoTable.finalY + 15);
+
+                    // Agregar paginación en cada página
+                    const pageCount = doc.internal.getNumberOfPages();
+                    for (let i = 1; i <= pageCount; i++) {
+                        doc.setPage(i);
+                        doc.setFontSize(8);
+                        doc.text('Página ' + i + ' de ' + pageCount, doc.internal.pageSize.width - 20, doc.internal.pageSize.height - 10);
+                        doc.text('Fecha de generación: ' + fecha, 14, doc.internal.pageSize.height - 10);
+                    }
+
+                    // Guardar el PDF
+                    doc.save('listado_turnos.pdf');
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'PDF Generado',
+                        text: `Se ha generado el PDF con ${totalTurnos} turnos.`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                })
+                .catch(error => {
+                    console.error('Error detallado:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `No se pudo generar el PDF: ${error.message}`
+                    });
+                });
+        };
+
+
+        // Inicializar eventos
+        reassignModalEvents();
+    });
+
+    function handleDeleteClick(e) {
+        e.preventDefault();
+        const url = this.getAttribute('href');
+        const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                [csrfHeader]: csrfToken
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Turno Eliminado',
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    bootstrap.Modal.getInstance(this.closest('.modal')).hide();
+                    updateTable(); // Actualiza la tabla después de eliminar
+                } else {
+                    throw new Error(data.error);
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Error al eliminar turno',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+    }
+
+    // Asegúrate de reasignar los eventos después de cada actualización
+    function reassignModalEvents() {
+        document.querySelectorAll('.eliminar-turno-btn').forEach(button => {
+            button.removeEventListener('click', handleDeleteClick);
+            button.addEventListener('click', handleDeleteClick);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('agregarTurnoModal');
+        modal.addEventListener('shown.bs.modal', function () {
+            const today = new Date();
+
+            // Fecha actual en formato YYYY-MM-DD
+            const fechaInput = document.getElementById('fechaAdd');
+            fechaInput.value = today.toISOString().split('T')[0];
+
+            // Hora actual en formato HH:MM
+            const horaInput = document.getElementById('horaInicioAdd');
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+            horaInput.value = `${hours}:${minutes}`;
+        });
+
+        // Manejo del formulario
+        document.getElementById('agregarTurnoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Turno Agregado', text: data.message, timer: 2000, showConfirmButton: false });
+                        bootstrap.Modal.getInstance(modal).hide();
+                        updateTable();
+                    } else {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error', text: data.error, timer: 2000, showConfirmButton: false });
+                    }
+                })
+                .catch(error => Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Error', text: 'Error al agregar turno: ' + error.message }));
+        });
+    });
+</script>
+</body>
+</html>

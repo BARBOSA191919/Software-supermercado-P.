@@ -1,0 +1,95 @@
+HHELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!/src/main//target/
+!/src/test//target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!/src/main//build/
+!/src/test//build/
+
+### VS Code ###
+.vscode/
+
+# Archivo de ayuda generado automáticamente
+HELP.md
+
+# Directorios de compilación
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!/src/main//target/
+!/src/test//target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!/src/main//build/
+!/src/test//build/
+
+### VS Code ###
+.vscode/
+
+# ==========================================
+# ARCHIVOS ESPECÍFICOS DEL PROYECTO A IGNORAR
+# ==========================================
+
+### Controladores a ignorar ###
+mini-control-empleados/src/main/java/com/gestion/inventario/controlador/VenderController.java
+mini-control-empleados/src/main/java/com/gestion/inventario/controlador/ReporteController.java
+mini-control-empleados/src/main/java/com/gestion/inventario/controlador/CompraController.java
+
+### Entidades a ignorar ###
+mini-control-empleados/src/main/java/com/gestion/inventario/entidades/ProductoParaVender.java
+mini-control-empleados/src/main/java/com/gestion/inventario/entidades/ReporteVenta.java
+
+### Repositorios a ignorar ###
+mini-control-empleados/src/main/java/com/gestion/inventario/repositorios/ProductosVendidosRepository.java
+mini-control-empleados/src/main/java/com/gestion/inventario/repositorios/VentaRepository.java
+
+### Servicios Implementation a ignorar ###
+mini-control-empleados/src/main/java/com/gestion/inventario/ServiceImpl/VentaServiceimpl.java
+mini-control-empleados/src/main/java/com/gestion/inventario/ServiceImpl/ReporteVentaServiceImpl.java
+
+### Servicios Interface a ignorar ###
+mini-control-empleados/src/main/java/com/gestion/inventario/servicio/VentaService.java
+mini-control-empleados/src/main/java/com/gestion/inventario/servicio/ReporteVentaService.java

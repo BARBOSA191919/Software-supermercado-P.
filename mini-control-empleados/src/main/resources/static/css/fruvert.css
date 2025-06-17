@@ -1,0 +1,225 @@
+.menu-section-title {
+    color: rgba(255,255,255,0.6);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    margin-left: 16px;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    display: flex;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #343a40;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    height: 100%;
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out;
+    color: white;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: #343a40;
+    border-bottom: 1px solid #444;
+}
+
+.sidebar-title {
+    font-size: 35px;
+    font-weight: bold;
+    color: white;
+    margin-left: 30px;
+}
+
+.btn.btn-light {
+    margin-left: auto;
+    font-size: 1rem;
+    padding: 0.3rem 0.6rem;
+}
+
+.sidebar .nav-link {
+    color: white;
+    padding: 15px 1.5rem;
+    display: block;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #3b3b3b;
+}
+
+.toggle-btn {
+    font-size: 1.5rem;
+    background-color: #343a40;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    position: fixed;
+    top: 37px;
+    left: 197px;
+    cursor: pointer;
+    z-index: 1001;
+    border-radius: 5px;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 0;
+    transition: margin-left 0.3s ease-in-out;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-content.sidebar-active {
+    margin-left: 250px;
+}
+
+.header-title {
+    background-color: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1200px;
+}
+
+.dashboard-content {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 30px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.category-card {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+.category-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+.category-card img {
+    width: 100%;
+    height: 341px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover img {
+    transform: scale(1.1);
+}
+
+.category-card-content {
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.category-card h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.category-card p {
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 1rem;
+    background-color: #343a40;
+}
+
+footer {
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-content {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.top-center-button1 {
+    position: relative;
+    bottom: 86px;
+    left: 480px;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1000; /* Para asegurarte de que el botón esté encima */
+}
+
+.top-center-button1 a {
+    background-color: #343A40; /* Color del botón */
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.top-center-button1 a:hover {
+    background-color: #495057; /* Efecto hover */
+    color: #fff;
+    transform: translateX(-50%) scale(1.05);
+}
+
+.btn-cerrarSesion{
+    padding-top: 10px;
+    text-align: center;
+}

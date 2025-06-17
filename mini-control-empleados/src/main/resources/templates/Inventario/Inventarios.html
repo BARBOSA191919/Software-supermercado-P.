@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <title>Sistema de Inventario</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" rel="stylesheet">
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/3082/3082011.png" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/css/Inventarios.css}">
+</head>
+<body>
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-text">
+        <i class="fas fa-store"></i> Mi Tienda
+
+        <div class="nav-actions ">
+        <span class="navbar-text me-3">
+          <i class="bi bi-person-circle"></i>
+          <strong><span sec:authentication="principal.username"></span></strong>
+        </span>
+        </div>
+
+        <div class="mt-3">
+          <a href="javascript:history.back()" class="btn btn-secondary btn-block">
+            <i class="fas fa-arrow-left mr-2"></i> Volver Atrás
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <ul class="list-unstyled components" id="lista-categorias">
+      <div class="menu-section-title">MENU PRINCIPAL</div>
+      <li class="menu-item">
+        <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/Inventarios/}">
+          <i class="fas fa-chart-line"></i> Inventario
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a href="javascript:void(0);" data-section="movimientos" onclick="abrirVentana(this.href)" th:href="@{/Movimientos/}">
+          <i class="fas fa-calendar"></i> Movimientos
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a href="javascript:void(0);" data-section="alertas" onclick="abrirVentana(this.href)" th:href="@{/Alertas/}">
+          <i class="fas fa-receipt"></i> Alertas
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/compras/listar}" data-section="alertas">
+          <i class="fas fa-shopping-cart me-2"></i>Compras
+        </a>
+      </li>
+      <div class="menu-section-title mt-3">CONFIGURACION GENERAL</div>
+
+      <li class="menu-item">
+        <a href="javascript:void(0);" onclick="abrirVentana(this.href)" th:href="@{/Configuracion/}">
+          <i class="fas fa-cog sidebar-icon"></i> Configuracion
+        </a>
+      </li>
+
+      <ul class="list-unstyled">
+        <li>
+          <form id="logoutForm" class="btn_cerrar" th:action="@{/logout}" method="post">
+            <button type="button" class="btn btn-danger btn-block" onclick="confirmLogout()">
+              <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+          </form>
+        </li>
+      </ul>
+    </ul>
+  </nav>
+
+  <div id="content">
+    <div class="search-section">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="input-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar productos...">
+            <button class="btn btn-primary" type="button" id="searchButton">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <select class="form-select" id="categoria-filter">
+            <option value="">-- Seleccione una categoría --</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <select class="form-select" id="proveedor" name="proveedorId" required>
+            <option value="">-- Seleccione un proveedor --</option>
+            <th:block th:each="proveedor : ${proveedores}">
+              <option th:value="${proveedor.id}" th:text="${proveedor.nombreProveedor}"></option>
+            </th:block>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5>Listado de Productos</h5>
+        <div class="btn-group">
+          <button style="border: none">
+            <a href="/principal" class="ml-auto btn btn-outline-secondary">
+              <i class="fas fa-home"></i> Inicio
+            </a>
+          </button>
+          <button type="button" class="btn btn-success ms-2" onclick="exportarExcel()">
+            <i class="fas fa-file-excel me-2"></i> Exportar a Excel
+          </button>
+
+          <label class="btn btn-warning ms-2" for="importExcel">
+            <i class="fas fa-upload me-2"></i>Importar Excel
+          </label>
+
+          <input type="file" id="importExcel" accept=".xlsx,.xls" style="display: none" onchange="importarExcel(this)"/>
+
+          <button class="btn btn-danger ms-2" target="_blank" onclick="exportarPDF()">
+            <i class="fas fa-file-pdf me-2" ></i>Exportar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Stock</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody id="inventarioTableBody">
+          </tbody>
+        </table>
+
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div>
+          <span id="pageInfo" class="text-muted"></span>
+        </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center" id="pagination">
+            <!-- Los botones de paginación se generarán dinámicamente -->
+          </ul>
+        </nav>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal para Agregar Producto (sin cambios) -->
+  <div class="modal fade" id="agregarProductoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Agregar Producto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="productoForm">
+            <div class="mb-3">
+              <label for="codigo" class="form-label">Código</label>
+              <input type="text" class="form-control" id="codigo" name="codigo" required>
+            </div>
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="precio" class="form-label">Precio</label>
+              <input type="number" class="form-control" id="precio" name="precio" step="0.01" required>
+            </div>
+            <div class="mb-3">
+              <label for="stock" class="form-label">Stock</label>
+              <input type="number" class="form-control" id="stock" name="stock" required>
+            </div>
+            <div class="mb-3">
+              <label for="categoria" class="form-label">Categoría</label>
+              <select class="form-select" id="categoria" name="categoriaId" required>
+                <option value="">Seleccione una categoría</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="btnGuardarProducto">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script th:src="@{/js/Inventarios.js}"></script>
+</body>
+</html>
