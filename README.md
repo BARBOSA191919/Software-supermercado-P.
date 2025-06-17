@@ -46,17 +46,37 @@
 
 
 mini-control-empleados/
-  # Controladores REST y Web
-├── 📂 controlador/  
-# Modelos JPA/Hibernate
-├── 📂 entidades/           
-├── 📂 repositorios/        # Repositorios de datos
-├── 📂 servicio/           # Lógica de negocio
-├── 📂 ServiceImpl/        # Implementaciones de servicios
+ - Controladores REST y Web
+   
+ ├── 📂 controlador/
+
+ - Modelos JPA/Hibernate
+                  
+├── 📂 entidades/  
+
+- Repositorios de datos
+  
+├── 📂 repositorios/    
+
+ - Lógica de negocio
+   
+├── 📂 servicio/ 
+
+- Implementaciones de servicios
+  
+├── 📂 ServiceImpl/
+
+- CSS, JS, Imágenes
 ├── 📂 resources/
-│   ├── 📂 static/         # CSS, JS, Imágenes
-│   └── 📂 templates/      # Plantillas Thymeleaf
-└── 📂 BD/                 # Scripts de base de datos
+│   ├── 📂 static/
+
+ - Plantillas Thymeleaf
+      
+│   └── 📂 templates/ 
+
+  - Scripts de base de datos
+    
+└── 📂 BD/               
 
 
 ## ⚡ Funcionalidades por Módulo
