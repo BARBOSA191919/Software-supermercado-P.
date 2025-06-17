@@ -44,40 +44,18 @@
 
 ## 📁 Estructura del Proyecto
 
-
+```text
 mini-control-empleados/
- - Controladores REST y Web
-   
- ├── 📂 controlador/
-
- - Modelos JPA/Hibernate
-                  
-├── 📂 entidades/  
-
-- Repositorios de datos
-  
-├── 📂 repositorios/    
-
- - Lógica de negocio
-   
-├── 📂 servicio/ 
-
-- Implementaciones de servicios
-  
-├── 📂 ServiceImpl/
-
-- CSS, JS, Imágenes
-├── 📂 resources/
-│   ├── 📂 static/
-
- - Plantillas Thymeleaf
-      
-│   └── 📂 templates/ 
-
-  - Scripts de base de datos
-    
-└── 📂 BD/               
-
+├── 📂 controlador/     # Controladores REST y Web
+├── 📂 entidades/       # Modelos JPA/Hibernate
+├── 📂 repositorios/    # Repositorios de datos
+├── 📂 servicio/        # Lógica de negocio
+├── 📂 ServiceImpl/     # Implementaciones de servicios
+├── 📂 resources/       # CSS, JS, Imágenes
+│   ├── 📂 static/       # Recursos estáticos
+│   └── 📂 templates/    # Plantillas Thymeleaf
+└── 📂 BD/              # Scripts de base de datos
+```        
 
 ## ⚡ Funcionalidades por Módulo
 
