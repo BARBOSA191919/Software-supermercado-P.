@@ -118,8 +118,11 @@ mini-control-empleados/
 
 ## 📸 Capturas de Pantalla
 
+### Login 
+![Image](https://github.com/user-attachments/assets/b972f9d0-49a5-4509-8e07-bd65d554bbfa)
+
 ### Dashboard Principal
-![Dashboard](https://via.placeholder.com/800x400/4CAF50/white?text=Dashboard+Principal)
+
 
 ### Punto de Venta
 ![POS](https://via.placeholder.com/800x400/2196F3/white?text=Sistema+POS)
