@@ -126,7 +126,8 @@ mini-control-empleados/
 
 ### 🏠 Panel Principal
 
-   - 🎛️ Dashboard Ejecutivo
+-   🎛️ Dashboard Ejecutivo
+  
 ![Image](https://github.com/user-attachments/assets/80980388-d32a-474a-8d7a-d6d163ee82b7)
 
 ### 💰 Módulo de Ventas
